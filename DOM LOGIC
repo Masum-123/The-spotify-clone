@@ -1,0 +1,60 @@
+// Selecting DOM elements
+let masterPlay = document.getElementById('masterPlay');
+let progressBar = document.getElementById('progressBar');
+let songName = document.getElementById('songName');
+let songItems = Array.from(document.getElementsByClassName('songItem'));
+
+// Updating song list dynamically using DOM
+songItems.forEach((element, i) => {
+  element.getElementsByTagName("img")[0].src = songs[i].coverPath;
+  element.getElementsByTagName("span")[0].innerText = songs[i].songName;
+});
+
+// Play / Pause button toggle
+masterPlay.addEventListener('click', () => {
+  if (audioElement.paused || audioElement.currentTime <= 0) {
+    audioElement.play();
+    masterPlay.classList.remove('fa-circle-play');
+    masterPlay.classList.add('fa-pause');
+  } else {
+    audioElement.pause();
+    masterPlay.classList.remove('fa-pause');
+    masterPlay.classList.add('fa-circle-play');
+  }
+});
+
+// Update progress bar while song plays
+audioElement.addEventListener('timeupdate', () => {
+  let progress = parseInt((audioElement.currentTime / audioElement.duration) * 100);
+  progressBar.value = progress;
+});
+
+// Update song position when progress bar changes
+progressBar.addEventListener('change', () => {
+  audioElement.currentTime = progressBar.value * audioElement.duration / 100;
+});
+
+// Handling click events for each song in playlist
+Array.from(document.getElementsByClassName('songplay')).forEach((element, index) => {
+  element.addEventListener('click', () => {
+    songIndex = index;
+    audioElement.src = songs[songIndex].filePath;
+    songName.innerText = songs[songIndex].songName;
+    audioElement.currentTime = 0;
+    audioElement.play();
+    masterPlay.classList.remove('fa-circle-play');
+    masterPlay.classList.add('fa-pause');
+  });
+});
+
+// Next and Previous buttons DOM interaction
+document.getElementById('next').addEventListener('click', () => {
+  songIndex = (songIndex + 1) % songs.length;
+  audioElement.src = songs[songIndex].filePath;
+  songName.innerText = songs[songIndex].songName;
+  audioElement.currentTime = 0;
+  audioElement.play();
+});
+
+document.getElementById('previous').addEventListener('click', () => {
+  songIndex = (songIndex - 1
